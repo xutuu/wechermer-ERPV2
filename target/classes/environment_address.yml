@@ -1,0 +1,61 @@
+#测试环境
+host: http://192.168.5.197:8090/api/
+
+#线上环境
+#host: https://erp.wecharmer.com/proxy/
+
+
+api:
+  login :
+    login_in: "account/login"
+
+  purchase:
+    apply_purchase_bill: "applypurchasebill"
+    apply_purchase_bill_detail: "applypurchasebill/details"
+    apply_purchase_bill_page: "applypurchasebill/page?purchaseBusinessType=3&applyPurchaseBillStatuses=1,2&sorts=%7B%22field%22:%22id%22,%22order%22:%22desc%22%7D&pageIndex=1&pageSize=10"
+    apply_purchase_bill_review: "applypurchasebill/approvestatus/6834/review"
+    apply_purchase_bill_code: "applypurchasebill/6834"
+    purchase_order: "purchaseorder"
+    purchase_order_detail: "purchaseorder/purchaseorderdetails"
+    purchase_order_big_products: "bigproductsampleretention/saveorupdate"
+    purchase_order_attachment: "purchaseorder/create-or-update-bom-atts"
+    purchase_order_review: "purchaseorder/approvestatus/5359/review"
+    purchase_order_code: "purchaseorder/5359"
+    purchase_order_goods: "purchaseorder/5359/detail/all"
+    agreement_baseInfo: "agreement/baseinfo"
+    create_agreement_doc: "agreement/createagreementdoc?agreementId=380&printTemplateId=108"
+    audit_agreement_doc: "agreement/signinfo"
+    initiate_agreement: "agreement/initiate"
+    received_agreement: "agreement/received-agreement?id=380"
+    sign_agreement: "agreement/sign"
+    create_payment_statement: "paymentstatement"
+    submit_payment_statement: "paymentstatement/submit/395"
+
+  supplier:
+    supplier_stock_in: "supplierstockin/create"
+    supplier_stock_in_submit: "supplierstockin/1187/submit"
+
+  firstLeg:
+    inspection_require: "inspection/require"
+    inspection_require_detail: "inspection/require/2537"
+    inspection_require_submit: "inspection/require/submit/2537"
+    inspection_require_assign: "inspection/require/assign/2537/329"
+    inspection_report: "inspection/report"
+    inspection_report_submit: "inspection/report/askapprove/2360"
+    stock_up_bill: "stockupbill/create"
+    stock_up_bill_detail: "stockupbill/detail/create"
+    stock_up_bill_share: "stockupbill/detail/share/update"
+    stock_up_detail: "stockupbill/detail/2146"
+    print_picking_bill_assign: "printpickingbill/assign/picker"
+    print_picking_bill: "printpickingbill/confirm/print/url"
+    print_template: "printtemplate/by-code?printtemplatecode="
+
+
+  storage:
+    stock_in: "stockinbill/purchase-order"
+    stock_in_review: "stockinbill/approve-status/4467/review"
+    stock_in_page: "stockinbill/page"
+    stock_on_shu: "putonshelfbill/sku"
+
+  product:
+    product_sku_info: "product/sku/fullinfo/page"
