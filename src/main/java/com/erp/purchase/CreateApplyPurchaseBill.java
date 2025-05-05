@@ -2,15 +2,19 @@ package com.erp.purchase;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.erp.common.DateHandle;
+import com.erp.purchase.dto.AddApplyPurchaseBillGoodsParamsDto;
 import com.erp.purchase.dto.CreateApplyPurchaseBillParamsDto;
 
+import java.util.List;
+
 import static com.erp.common.DateHandle.getTargetDate;
-import static com.erp.common.HttpClientCommon.getRequestUrl;
-import static com.erp.common.HttpClientCommon.postHttpClient;
+import static com.erp.common.HttpClientCommon.*;
 import static com.erp.common.OperateYml.writerEnvironmentVariable;
+import static com.erp.common.env.EnvironmentVariableEnum.*;
+import static com.erp.project.ProductManage.querySku;
 
 
-public class CreateApplyPurchaseBill extends ApplyPurchaseBillDto {
+public class CreateApplyPurchaseBill {
 
     private static String requestUrl;
     private static JSONObject responseJson;
@@ -23,7 +27,7 @@ public class CreateApplyPurchaseBill extends ApplyPurchaseBillDto {
         createApplyPurchaseBillParamsDto.setExpectedArrivalTime(getTargetDate(DateHandle.getDate(5), "T"));
         createApplyPurchaseBillParamsDto.setExpectedPutOnSaleTime(getTargetDate(DateHandle.getMonth(4), "T"));
 
-        responseJson = postHttpClient(getRequestUrl(moduleName,"apply_purchase_bill"), createApplyPurchaseBillParamsDto);
+        responseJson = postHttpClient(getRequestUrl(moduleName,"apply_purchase_bill"), createApplyPurchaseBillParamsDto.toString());
 
         writerEnvironmentVariable("applyPurchaseBillId", JSONObject.parseObject(responseJson.getString("result"))
                 .getString("id"));
@@ -31,8 +35,15 @@ public class CreateApplyPurchaseBill extends ApplyPurchaseBillDto {
     }
 
     // 常规申购单物料明细维护
-    public static void applyPurchaseBillDetails(){
-        applyPurchaseBillDetailsParams = applyPurchaseBillDetailsParams.replace("6834", APPLY_PURCHASE_BILL_ID.getValue());
+    public static void applyPurchaseBillDetails(List<String> goodsCodes){
+
+        AddApplyPurchaseBillGoodsParamsDto addApplyPurchaseBillGoodsParamsDto = new AddApplyPurchaseBillGoodsParamsDto();
+        addApplyPurchaseBillGoodsParamsDto.setApplyPurchaseBillId(APPLY_PURCHASE_BILL_ID.getValue());
+        JSONObject resultJson = querySku(goodsCodes);
+        String skuId = resultJson.getString("skuId");
+        String productId = resultJson.getString("productId");
+
+        addApplyPurchaseBillGoodsParamsDto.setPurchaseBillDetails();
         responseJson = postHttpClient(getRequestUrl(moduleName,"apply_purchase_bill_detail"), applyPurchaseBillDetailsParams);
 
     }
@@ -40,7 +51,7 @@ public class CreateApplyPurchaseBill extends ApplyPurchaseBillDto {
     public static void applyPurchaseBillReview(){
         requestUrl = getRequestUrl(moduleName,"apply_purchase_bill_review")
                 .replace("6834", APPLY_PURCHASE_BILL_ID.getValue());
-        putHttpClient(requestUrl, "");
+        putHttpClient(requestUrl);
     }
     // 查询申购单ApplyPurchaseBillCode
     public static void applyPurchaseBillCode(){
