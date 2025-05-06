@@ -12,6 +12,7 @@ import java.util.List;
 import static com.erp.common.DateHandle.getTargetDate;
 import static com.erp.common.HttpClientCommon.*;
 import static com.erp.common.OperateYml.writerEnvironmentVariable;
+import static com.erp.env.EnvironmentVariableEnum.APPLY_PURCHASE_BILL_ID;
 import static com.erp.project.ProductManage.querySku;
 
 
@@ -45,7 +46,7 @@ public class CreateApplyPurchaseBill {
 
         List<String> skuIdList = getResponseList(resultJson.getString("result"), "items", "id");
         List<String> productIdList = getResponseList(resultJson.getString("result"), "items", "productId");
-        HashMap<String, String> applyPurchaseGoodsMap = new HashMap();
+        HashMap<String, String> applyPurchaseGoodsMap = new HashMap<>();
         ArrayList<String> applyPurchaseGoodsMapList = new ArrayList<>();
         for (int i = 0; i < skuIdList.size(); i++) {
 
@@ -90,7 +91,8 @@ public class CreateApplyPurchaseBill {
         try{
             applyPurchaseBill();
             Thread.sleep(1000);
-            applyPurchaseBillDetails();
+            List<String> skuCodes = new ArrayList<>();
+            applyPurchaseBillDetails(skuCodes);
             Thread.sleep(1000);
             applyPurchaseBillReview();
             Thread.sleep(1000);
