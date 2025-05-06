@@ -5,12 +5,13 @@ import com.erp.common.DateHandle;
 import com.erp.purchase.dto.AddApplyPurchaseBillGoodsParamsDto;
 import com.erp.purchase.dto.CreateApplyPurchaseBillParamsDto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.erp.common.DateHandle.getTargetDate;
 import static com.erp.common.HttpClientCommon.*;
 import static com.erp.common.OperateYml.writerEnvironmentVariable;
-import static com.erp.common.env.EnvironmentVariableEnum.*;
 import static com.erp.project.ProductManage.querySku;
 
 
@@ -40,11 +41,26 @@ public class CreateApplyPurchaseBill {
         AddApplyPurchaseBillGoodsParamsDto addApplyPurchaseBillGoodsParamsDto = new AddApplyPurchaseBillGoodsParamsDto();
         addApplyPurchaseBillGoodsParamsDto.setApplyPurchaseBillId(APPLY_PURCHASE_BILL_ID.getValue());
         JSONObject resultJson = querySku(goodsCodes);
-        String skuId = resultJson.getString("skuId");
-        String productId = resultJson.getString("productId");
 
-        addApplyPurchaseBillGoodsParamsDto.setPurchaseBillDetails();
-        responseJson = postHttpClient(getRequestUrl(moduleName,"apply_purchase_bill_detail"), applyPurchaseBillDetailsParams);
+
+        List<String> skuIdList = getResponseList(resultJson.getString("result"), "items", "id");
+        List<String> productIdList = getResponseList(resultJson.getString("result"), "items", "productId");
+        HashMap<String, String> applyPurchaseGoodsMap = new HashMap();
+        ArrayList<String> applyPurchaseGoodsMapList = new ArrayList<>();
+        for (int i = 0; i < skuIdList.size(); i++) {
+
+            applyPurchaseGoodsMap.put("skuId", skuIdList.get(i));
+            applyPurchaseGoodsMap.put("productId", productIdList.get(i));
+            applyPurchaseGoodsMap.put("quantity", "200" );
+            applyPurchaseGoodsMapList.add(applyPurchaseGoodsMap.toString());
+
+        }
+
+        addApplyPurchaseBillGoodsParamsDto.setPurchaseBillDetails(applyPurchaseGoodsMapList);
+        // 打印请求体
+        System.out.println(addApplyPurchaseBillGoodsParamsDto);
+
+        responseJson = postHttpClient(getRequestUrl(moduleName,"apply_purchase_bill_detail"), addApplyPurchaseBillGoodsParamsDto.toString());
 
     }
     // 申购单提交审核

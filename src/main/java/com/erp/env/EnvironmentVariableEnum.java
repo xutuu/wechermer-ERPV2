@@ -1,4 +1,4 @@
-package com.erp.common.env;
+package com.erp.env;
 
 import static com.erp.common.OperateYml.readEnvironmentVariable;
 

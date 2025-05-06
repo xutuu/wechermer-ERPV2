@@ -1,6 +1,9 @@
 package com.erp.common;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -12,6 +15,8 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.erp.common.OperateYml.*;
 
@@ -106,4 +111,25 @@ public class HttpClientCommon {
 
     }
 
+    public static List<String> getResponseList(String responseBody, String responseKey, String keyName) {
+        List<String> list = new ArrayList<>();
+
+        try {
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+            JsonNode valueNodes = jsonNode.get(responseKey);
+
+            for (JsonNode valueNode : valueNodes) {
+                String value = valueNode.get(keyName).asText();
+                list.add(value);
+            }
+            System.out.println(list);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

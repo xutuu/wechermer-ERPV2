@@ -1,13 +1,15 @@
 package com.erp.purchase;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.wechermer.dto.PurchaseBillDto;
+import com.erp.purchase.dto.PurchaseBillDto;
 
-import static com.wechermer.common.ConnectionMysql.executeSql;
-import static com.wechermer.common.DateHandle.getDate;
-import static com.wechermer.common.HttpClientExample.*;
-import static com.wechermer.common.OperateYml.writerEnvironmentVariable;
-import static com.wechermer.enumeration.EnvironmentVariableEnum.*;
+import java.util.HashMap;
+
+import static com.erp.common.DateHandle.*;
+import static com.erp.common.HttpClientCommon.*;
+import static com.erp.common.OperateYml.writerEnvironmentVariable;
+import static com.erp.env.EnvironmentVariableEnum.APPLY_PURCHASE_BILL_CODE;
+import static com.erp.env.EnvironmentVariableEnum.APPLY_PURCHASE_BILL_ID;
 
 public class CreatePurchaseBill extends PurchaseBillDto {
 
@@ -17,20 +19,18 @@ public class CreatePurchaseBill extends PurchaseBillDto {
 
     // 生成采购单
     public static void purchaseBill(Integer warehouseId) {
-        purchaseBillParams = purchaseBillParams.replace("7169", APPLY_PURCHASE_BILL_ID.getValue())
-                .replace("QG25031100051", APPLY_PURCHASE_BILL_CODE.getValue())
-                .replace("2025-03-12", getDate(3))
-                .replace("2025-03-21", getDate(8))
-                .replace("2025-06-11",getDate(90));
 
-        if (warehouseId != 2) {
-            purchaseBillParams = purchaseBillParams.replace("小飞", "小李1")
-                    .replace("17620865451","176201232411")
-                    .replace("Detail Address","广州")
-                    .replace("\"warehouseId\": 2","\"warehouseId\": " + warehouseId);
-        }
+        HashMap<String, Integer> hashMap = new HashMap<>();
 
-        JSONObject orderResponseJson = postHttpClient(getRequestUrl(moduleName,"purchase_order"), purchaseBillParams);
+        PurchaseBillDto purchaseBillDto = new PurchaseBillDto();
+        purchaseBillDto.setDeliveryDate(getTargetDate(getDate(3), "Z"));
+        purchaseBillDto.setExpectedArrivalTime(getTargetDate(getDate(10), "T"));
+        purchaseBillDto.setExpectedPutOnSaleTime(getTargetDate(getMonth(3), "T"));
+        purchaseBillDto.setApplyPurchaseBillId(APPLY_PURCHASE_BILL_ID.getValue());
+        purchaseBillDto.setApplyPurchaseBillCode(APPLY_PURCHASE_BILL_CODE.getValue());
+        purchaseBillDto.setSoureBillId(APPLY_PURCHASE_BILL_ID.getValue());
+
+        JSONObject orderResponseJson = postHttpClient(getRequestUrl(moduleName,"purchase_order"), purchaseBillDto.toString());
 
         writerEnvironmentVariable("purchaseOrderId", JSONObject.parseObject(orderResponseJson.getString("result")).getString("id"));
     }
